@@ -76,9 +76,10 @@ std::pair<VW::topk::const_iterator_t, VW::topk::const_iterator_t> VW::topk::get_
 
 void VW::topk::clear_container() { _pr_queue.clear(); }
 
-void print_result(int file_descriptor, std::pair<VW::topk::const_iterator_t, VW::topk::const_iterator_t> const& view)
+void print_result(
+    VW::io::writer* file_descriptor, std::pair<VW::topk::const_iterator_t, VW::topk::const_iterator_t> const& view)
 {
-  if (file_descriptor >= 0)
+  if (file_descriptor != nullptr)
   {
     std::stringstream ss;
     for (auto it = view.first; it != view.second; it++)
@@ -89,11 +90,7 @@ void print_result(int file_descriptor, std::pair<VW::topk::const_iterator_t, VW:
     }
     ss << '\n';
     ssize_t len = ss.str().size();
-#ifdef _WIN32
-    ssize_t t = _write(file_descriptor, ss.str().c_str(), (unsigned int)len);
-#else
-    ssize_t t = write(file_descriptor, ss.str().c_str(), (unsigned int)len);
-#endif
+    auto t = file_descriptor->write(ss.str().c_str(), len);
     if (t != len)
       std::cerr << "write error: " << strerror(errno) << std::endl;
   }

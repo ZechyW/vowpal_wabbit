@@ -10,9 +10,9 @@
 
 namespace ACTION_SCORE
 {
-void print_action_score(int f, v_array<action_score>& a_s, v_array<char>& tag)
+void print_action_score(VW::io::writer* f, const v_array<action_score>& a_s, const v_array<char>& tag)
 {
-  if (f >= 0)
+  if (f != nullptr)
   {
     std::stringstream ss;
 
@@ -25,7 +25,7 @@ void print_action_score(int f, v_array<action_score>& a_s, v_array<char>& tag)
     print_tag_by_ref(ss, tag);
     ss << '\n';
     ssize_t len = ss.str().size();
-    ssize_t t = io_buf::write_file_or_socket(f, ss.str().c_str(), (unsigned int)len);
+    ssize_t t = f->write(ss.str().c_str(), (unsigned int)len);
     if (t != len)
       std::cerr << "write error: " << strerror(errno) << std::endl;
   }
